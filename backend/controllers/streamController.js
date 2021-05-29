@@ -1,6 +1,20 @@
 const Stream = require("../models/streamModels");
 const User = require("../models/userModels");
+const Notification = require("../models/notificationModel");
 const asyncHandler = require("express-async-handler");
+
+const createNotification = (data) => {
+  const notification = new Notification({
+    read: false,
+    recipient: data.recipient,
+    sender: data.sender,
+    type: data.type,
+    screamId: data.screamId,
+    message: data.message,
+    nameHandler: data.nameHandler,
+  });
+  return notification;
+};
 
 //@desc : FETCH ALL STREAMS
 //@route : GET /api/streams
@@ -23,7 +37,6 @@ const getStreams = asyncHandler(async (req, res) => {
       { nameHandler: name },
       { image: 1, _id: 0 }
     );
-    console.log(user);
     streams[i].image = user.image;
   }
   res.json({ streams, page, pages: Math.ceil(count / pageSize) });
@@ -78,19 +91,20 @@ const createComment = asyncHandler(async (req, res) => {
       "comments.user",
       "id name image nameHandler"
     );
-
-    //add notification
-    const notification = {
-      read: false,
+    const data = {
       recipient: stream.userHandle,
       sender: comment.user,
-      type: "Comment",
       screamId: stream._id,
       message: comment.body,
+      nameHandler: stream.userHandle,
+      type: "Comment",
     };
+    //add notification
+    const newNotification = createNotification(data);
+    const notificationList = await newNotification.save();
     await User.updateOne(
       { nameHandler: stream.userHandle },
-      { $push: { notifications: notification } }
+      { $push: { notifications: data } }
     );
     res.json({ updatedStream });
   } else {
@@ -132,6 +146,17 @@ const likeStream = asyncHandler(async (req, res) => {
         screamId: stream._id,
         message: "like your post",
       };
+      const data = {
+        recipient: stream.userHandle,
+        sender: user._id,
+        screamId: stream._id,
+        message: "like your post",
+        nameHandler: stream.userHandle,
+        type: "like",
+      };
+      //add notification
+      const newNotification = createNotification(data);
+      const notificationList = await newNotification.save();
       await User.updateOne(
         { nameHandler: stream.userHandle },
         { $push: { notifications: notification } }
@@ -180,6 +205,17 @@ const unlikeStream = asyncHandler(async (req, res) => {
         screamId: stream._id,
         message: "unlike your post",
       };
+      const data = {
+        recipient: stream.userHandle,
+        sender: user._id,
+        screamId: stream._id,
+        message: "unlike your post",
+        nameHandler: stream.userHandle,
+        type: "unlike",
+      };
+      //add notification
+      const newNotification = createNotification(data);
+      const notificationList = await newNotification.save();
       await User.updateOne(
         { nameHandler: stream.userHandle },
         { $push: { notifications: notification } }

@@ -15,6 +15,8 @@ import Notifications from "@material-ui/icons/Notifications";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import PostStream from "./PostStream";
+import SettingsSharpIcon from '@material-ui/icons/SettingsSharp';
+import WorkOutlineTwoToneIcon from '@material-ui/icons/WorkOutlineTwoTone';
 
 const styles = {
   
@@ -119,7 +121,24 @@ const Navbar = ({ classes }) => {
         {userInfo ? (
           <>
             <PostStream />
+          
             <NotificationComponent />
+            <Tooltip title="Manage Setting" placement="top">
+              <IconButton
+                color="inherit"
+                className={classes.button}
+              >
+                <SettingsSharpIcon/>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Manage Job" placement="top">
+              <IconButton
+                color="inherit"
+                className={classes.button}
+              >
+                <WorkOutlineTwoToneIcon/>
+              </IconButton>
+            </Tooltip>
             <Tooltip title="click the  icon to log off" placement="top">
               <IconButton
                 component={Link}

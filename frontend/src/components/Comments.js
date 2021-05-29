@@ -78,9 +78,9 @@ const Comments = ({
                     <div className={classes.commentData}>
                       <Typography
                         onClick={() => closeModalHandler(`/user/${comment.user.nameHandler}`)}
-                        variant="h5"
+                        variant="body2"
                         color="primary"
-                        component={Link}
+                        component="button"
                       >
                         @{comment.user.nameHandler}
                       </Typography>

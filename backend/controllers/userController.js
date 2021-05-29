@@ -8,9 +8,7 @@ const generateToken = require("../token/generateToken");
 //@access : public access
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email: email })
-    .populate("notifications.sender", "nameHandler read image")
-    .populate("notifications.screamId");
+  const user = await User.findOne({ email: email });
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
@@ -18,8 +16,6 @@ const authUser = asyncHandler(async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
-      notifications: user.notifications,
-      user,
     });
   } else {
     res.status(401);

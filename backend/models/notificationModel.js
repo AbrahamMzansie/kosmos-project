@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const notificationSchema = mongoose.Schema(
   {
     loading: {
@@ -14,10 +13,19 @@ const notificationSchema = mongoose.Schema(
       required: true,
     },
     sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    type: {
       type: String,
       required: true,
     },
-    type: {
+    nameHandler: {
+      type: String,
+      required: true,
+    },
+    message: {
       type: String,
       required: true,
     },

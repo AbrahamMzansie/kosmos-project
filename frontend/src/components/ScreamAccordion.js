@@ -12,10 +12,11 @@ const styles = {
     maxHeight: "500px",
     resize: "vertical",
     overflow: "auto",
-    margin: "30px",
+    margin: "50px",
   },
   accordion: {
-    margin: "30px",
+    margin: "10px",
+    
   },
 };
 const ScreamAccordion = ({ stream, index, classes , closeModal }) => {

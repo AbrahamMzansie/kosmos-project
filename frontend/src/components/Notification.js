@@ -29,6 +29,12 @@ const styles = {
     top: "-15px",
     left: "1px",
   },
+  Menu: {
+    marginRight: "40px",
+  },
+  li: {
+    marginRight: "40px",
+  },
   notification: {},
   MenuItem: {
     color: "black",
@@ -52,6 +58,10 @@ const Notification = ({ classes }) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  const updateNotificationHandler = (notification) => {
+    console.log(notification);
+    console.log("notifcation")
+  };
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -60,20 +70,21 @@ const Notification = ({ classes }) => {
   const ITEM_HEIGHT = 48;
 
   const dispatch = useDispatch();
-  /*
+  
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
-  */
+  
+ /*
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
   console.log(userInfo);
-  
+*/
   const renderNotificationBadge = () => {
     let result = null;
     const notificationList =
-    userInfo &&
-    userInfo.notifications &&
-    userInfo.notifications.filter(
+      user &&
+      user.notifications &&
+      user.notifications.filter(
         (item) => item.recipient !== item.sender.nameHandler
       );
     result = (
@@ -101,10 +112,13 @@ const Notification = ({ classes }) => {
           onClick={handleClick}
         >
           <Notifications></Notifications>
-          {userInfo && userInfo.notifications ? renderNotificationBadge() : null}
+          {user && user.notifications
+            ? renderNotificationBadge()
+            : null}
         </IconButton>
       </Tooltip>
       <Menu
+        className={classes.Menu}
         id="long-menu"
         anchorEl={anchorEl}
         keepMounted
@@ -112,27 +126,31 @@ const Notification = ({ classes }) => {
         onClose={handleClose}
         PaperProps={{
           style: {
+            marginRight: "50px",
             maxHeight: ITEM_HEIGHT * 4.5,
             width: "auto",
           },
         }}
       >
-        {userInfo &&
-          userInfo.notifications &&
-          userInfo.notifications.map((notify) =>
+        {user &&
+          user.notifications &&
+          user.notifications.map((notify) =>
             notify.recipient !== notify.sender.nameHandler ? (
-              <MenuItem 
-              style = {{backgroundColor : `${notify.read ? "#fff" : "#d0e8ff"}`}}
+              <MenuItem
+               
+                style={{
+                  margin: "10px",
+                  padding: "10px",
+                  borderRadius: "10px",
+                  backgroundColor: `${notify.read ? "#fff" : "#d0e8ff"}`,
+                }}
                 key={notify._id}
                 onClick={handleClose}
                 className={classes.MenuItem}
               >
-               
                 <div className={classes.icon}>
-                  <div
-                  style = {{marginRight : "10px"}}
-                  >
-                  <Avatar
+                  <div style={{ marginRight: "10px" }}>
+                    <Avatar
                       className={classes.commentImage}
                       alt="profile picture"
                       src={notify.sender.image}

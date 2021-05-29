@@ -78,12 +78,22 @@ const SreamDialog = ({ streamData, classes, userHandler, showViewButton }) => {
   const loading = loadingStreamDetails;
   const error = errorStreamDetails;
   useEffect(() => {}, [dispatch]);
+
   const openHandler = () => {
     setId(streamData._id);
     setOpen(true);
     dispatch({ type: STREAM_DETAILS_RESET });
     dispatch(streamDetails(streamData._id));
   };
+
+  const openSelectedStreamModalHandler = () => {
+    setId(streamData._id);
+    setOpen(true);
+    dispatch({ type: STREAM_DETAILS_RESET });
+    dispatch(streamDetails(streamData._id));
+
+  };
+
   const closeHandler = () => {
     setOpen(false);
     dispatch({ type: STREAM_DETAILS_RESET });
@@ -111,7 +121,7 @@ const SreamDialog = ({ streamData, classes, userHandler, showViewButton }) => {
     <>
       {showViewButton ? (
         <Button
-          onClick={openHandler}
+          onClick={openSelectedStreamModalHandler}
           className={classes.button}
           color="primary"
           type="submit"
@@ -170,9 +180,9 @@ const SreamDialog = ({ streamData, classes, userHandler, showViewButton }) => {
                         onClick={() =>
                           closeModalHandler(`/user/${userHandler}`)
                         }
-                        component={Link}
                         color="primary"
-                        variant="h5"
+                        variant="body2"
+                        component="button" 
                       >
                         @{userHandler}
                       </Typography>
@@ -204,6 +214,7 @@ const SreamDialog = ({ streamData, classes, userHandler, showViewButton }) => {
                       index={streamId}
                       stream={stream}
                     />
+                    <br/>
                   </Grid>
                 </DialogContent>
               </>
