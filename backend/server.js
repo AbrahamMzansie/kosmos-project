@@ -11,6 +11,7 @@ const streamRoutes = require("./routes/streamRoutes");
 const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 dotenv.config();
 connectDB();
@@ -31,6 +32,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/notifications" , notificationRoutes);
 
 app.get("/api/config/paypal", (req, res) => {
   return res.send(process.env.PAYPAL_CLIENT_ID);

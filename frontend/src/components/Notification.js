@@ -60,7 +60,7 @@ const Notification = ({ classes }) => {
   };
   const updateNotificationHandler = (notification) => {
     console.log(notification);
-    console.log("notifcation")
+    console.log("notifcation");
   };
 
   const handleClose = () => {
@@ -70,29 +70,30 @@ const Notification = ({ classes }) => {
   const ITEM_HEIGHT = 48;
 
   const dispatch = useDispatch();
-  
+
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
-  
- /*
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-  console.log(userInfo);
-*/
+
+  const user_notification = useSelector((state) => state.notifications);
+  console.log(user_notification);
+
+  const userData = useSelector((state) => state.userLogin);
+  const { userInfo } = userData;
+
   const renderNotificationBadge = () => {
     let result = null;
     const notificationList =
-      user &&
-      user.notifications &&
-      user.notifications.filter(
-        (item) => item.recipient !== item.sender.nameHandler
+      user_notification &&
+      user_notification.notifications &&
+      user_notification.notifications.filter(
+        (item) => ((item.recipient !== item.sender.nameHandler) && (item.read === false))
       );
     result = (
       <>
         <span className={classes.badge}>
           {" "}
           <Badge
-            badgeContent={notificationList.length}
+            badgeContent={notificationList && notificationList.length}
             color="secondary"
           ></Badge>
         </span>
@@ -112,9 +113,7 @@ const Notification = ({ classes }) => {
           onClick={handleClick}
         >
           <Notifications></Notifications>
-          {user && user.notifications
-            ? renderNotificationBadge()
-            : null}
+          {userInfo ? renderNotificationBadge() : null}
         </IconButton>
       </Tooltip>
       <Menu
@@ -132,12 +131,11 @@ const Notification = ({ classes }) => {
           },
         }}
       >
-        {user &&
-          user.notifications &&
-          user.notifications.map((notify) =>
+        {user_notification &&
+          user_notification.notifications &&
+          user_notification.notifications.map((notify, index) =>
             notify.recipient !== notify.sender.nameHandler ? (
               <MenuItem
-               
                 style={{
                   margin: "10px",
                   padding: "10px",
@@ -173,6 +171,8 @@ const Notification = ({ classes }) => {
                 </Typography>
                 <div className={classes.notification}>
                   <StreamDialog
+                    notificationID = {notify._id}
+                    index={index}
                     showViewButton
                     streamData={notify.screamId}
                     userHandler={notify.screamId && notify.screamId.userHandle}

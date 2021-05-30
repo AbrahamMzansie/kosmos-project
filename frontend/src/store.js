@@ -33,6 +33,7 @@ import {
   orderListReducer,
   orderDeliveredReducer,
 } from "./reducers/orderReducers";
+import { notificationListReducer } from "./reducers/notificationReducer";
 
 const reducer = combineReducers({
   productList: productListReducer,
@@ -57,8 +58,8 @@ const reducer = combineReducers({
   productCreateReview: productCreateReviewReducer,
   productTopRated: productTopRatedReducer,
   connectUser: connectWithAdminReducer,
-
   streamList: streamListReducer,
+  notifications: notificationListReducer,
 });
 const cartItemFromStorage = localStorage.getItem("cartItems")
   ? JSON.parse(localStorage.getItem("cartItems"))

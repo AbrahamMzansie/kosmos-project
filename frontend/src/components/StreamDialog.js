@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import { useDispatch, useSelector } from "react-redux";
-import Avatar from "@material-ui/core/Avatar";
-import { streamDetails, createComment } from "../actions/streamActions";
+import { streamDetails } from "../actions/streamActions";
+import { updateNotification } from "../actions/notificationAction";
 import dayjs from "dayjs";
-import { Link } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -20,7 +19,6 @@ import { STREAM_DETAILS_RESET } from "../constants/streamConstants";
 import UnfoldMore from "@material-ui/icons/UnfoldMore";
 import { Typography } from "@material-ui/core";
 import relativeTime from "dayjs/plugin/relativeTime";
-import Comments from "./Comments";
 import ScreamAccordion from "./ScreamAccordion";
 import { useHistory } from "react-router-dom";
 
@@ -57,7 +55,7 @@ const styles = {
   },
 };
 dayjs.extend(relativeTime);
-const SreamDialog = ({ streamData, classes, userHandler, showViewButton }) => {
+const SreamDialog = ({ streamData, classes, userHandler, showViewButton , index ,notificationID }) => {
   const history = useHistory();
   const [open, setOpen] = useState(false);
   const [id, setId] = useState("");
@@ -91,7 +89,7 @@ const SreamDialog = ({ streamData, classes, userHandler, showViewButton }) => {
     setOpen(true);
     dispatch({ type: STREAM_DETAILS_RESET });
     dispatch(streamDetails(streamData._id));
-
+    dispatch(updateNotification(notificationID , index));
   };
 
   const closeHandler = () => {
@@ -182,7 +180,7 @@ const SreamDialog = ({ streamData, classes, userHandler, showViewButton }) => {
                         }
                         color="primary"
                         variant="body2"
-                        component="button" 
+                        component="button"
                       >
                         @{userHandler}
                       </Typography>
@@ -214,7 +212,7 @@ const SreamDialog = ({ streamData, classes, userHandler, showViewButton }) => {
                       index={streamId}
                       stream={stream}
                     />
-                    <br/>
+                    <br />
                   </Grid>
                 </DialogContent>
               </>

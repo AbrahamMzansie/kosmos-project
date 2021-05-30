@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogout } from "../actions/userAction";
 
@@ -15,11 +15,12 @@ import Notifications from "@material-ui/icons/Notifications";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import PostStream from "./PostStream";
-import SettingsSharpIcon from '@material-ui/icons/SettingsSharp';
-import WorkOutlineTwoToneIcon from '@material-ui/icons/WorkOutlineTwoTone';
+import SettingsSharpIcon from "@material-ui/icons/SettingsSharp";
+import WorkOutlineTwoToneIcon from "@material-ui/icons/WorkOutlineTwoTone";
+
+import { listNotifications } from "../actions/notificationAction";
 
 const styles = {
-  
   paper: {
     padding: 20,
   },
@@ -81,9 +82,17 @@ const Navbar = ({ classes }) => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.userLogin);
   const { userInfo } = userData;
+
+  
+
   const userLogoutHandler = () => {
     dispatch(userLogout());
   };
+
+  useEffect(() => {
+    dispatch(listNotifications());
+  }, []);
+
   return (
     <AppBar>
       <ToolBar user={userInfo} className="nav-container">
@@ -121,22 +130,16 @@ const Navbar = ({ classes }) => {
         {userInfo ? (
           <>
             <PostStream />
-          
+
             <NotificationComponent />
             <Tooltip title="Manage Setting" placement="top">
-              <IconButton
-                color="inherit"
-                className={classes.button}
-              >
-                <SettingsSharpIcon/>
+              <IconButton color="inherit" className={classes.button}>
+                <SettingsSharpIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="Manage Job" placement="top">
-              <IconButton
-                color="inherit"
-                className={classes.button}
-              >
-                <WorkOutlineTwoToneIcon/>
+              <IconButton color="inherit" className={classes.button}>
+                <WorkOutlineTwoToneIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="click the  icon to log off" placement="top">

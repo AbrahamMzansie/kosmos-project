@@ -9,6 +9,44 @@ import {
   NOTIFICATION_UPDATE_SUCCESS,
   NOTIFICATION_UPDATE_FAIL,
 } from "../constants/notificationConstants";
+import axios from "axios";
+
+export const listNotifications = () => async (dispatch, getState) => {
+    try {
+      dispatch({ type: NOTIFICATION_LIST_REQUEST });
+      const { userLogin: { userInfo },} = getState();
+      const config = {headers: {"Content-Type": "application/json",Authorization: `Bearer ${userInfo.token}`,
+        },};
+
+      const {data} = await axios.get(`/api/notifications`, config);
+      dispatch({ type: NOTIFICATION_LIST_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({
+        type: NOTIFICATION_LIST_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
+
+export const getNotifications = (userHandler) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: NOTIFICATION_LIST_REQUEST });
+    const { data } = await axios.get(`/api/notifications`);
+    console.log(data);
+    dispatch({ type: NOTIFICATION_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: NOTIFICATION_LIST_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
 
 export const createNotification =
   ({ body }) =>
@@ -41,37 +79,16 @@ export const createNotification =
     }
   };
 
-export const listNotifications =
-  (userHandler) => async (dispatch, getState) => {
-    try {
-      dispatch({ type: NOTIFICATION_LIST_REQUEST });
-      const { data } = await axios.get(`/api/streams/${userHandler}/user`);
-      console.log(data);
-      dispatch({ type: NOTIFICATION_LIST_SUCCESS, payload: data });
-    } catch (error) {
-      dispatch({
-        type: NOTIFICATION_LIST_FAIL,
-        payload:
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message,
-      });
-    }
-  };
-export const updateNotification =
-  (streamID, index) => async (dispatch, getState) => {
+export const updateNotification = (streamID, index) => async (dispatch, getState) => {
     const currentItem = { index };
     try {
       dispatch({ type: NOTIFICATION_UPDATE_REQUEST, payload: index });
       const {
         userLogin: { userInfo },
       } = getState();
-      const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-      const { data } = await axios.get(
-        `/api/streams/${streamID}/unlike`,
-        config
-      );
-
+      const config = {headers: { Authorization: `Bearer ${userInfo.token}` }};
+      const { data } = await axios.get(`/api/notifications/${streamID}`,config);
+      console.log(data);
       dispatch({
         type: NOTIFICATION_UPDATE_SUCCESS,
         payload: { data, ...currentItem },
