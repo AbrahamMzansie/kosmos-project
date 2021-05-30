@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails } from "../actions/userAction";
+import { getUserDetails, updateUserImage } from "../actions/userAction";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
@@ -17,7 +17,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import MuiAlert from "@material-ui/lab/Alert";
 import Tooltip from "@material-ui/core/Tooltip";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
-import axios from "axios";
 import Progress from "../components/Progress";
 
 import EditProfile from "../components/EditProfile";
@@ -71,10 +70,10 @@ const styles = {
 };
 
 dayjs.extend(relativeTime);
-const Profile = ({ classes}) => {
- 
+const Profile = ({ classes }) => {
   const [uploading, setUploading] = useState(false);
   const [image, setImage] = useState("");
+  const [URL, setURL] = useState("");
 
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.userDetails);
@@ -82,7 +81,7 @@ const Profile = ({ classes}) => {
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-/*
+  /*
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const {
     success,
@@ -90,25 +89,54 @@ const Profile = ({ classes}) => {
     error: errorUserUpdateProfile,
   } = userUpdateProfile;
 */
-  useEffect(() => {
-    /* if (!userInfo) {
+  useEffect(
+    () => {
+      /* if (!userInfo) {
       history.push("/login");
     } else {*/
       //////////////////////////////////////////////////////
-  //  if (!user || !userInfo || user._id !== userInfo._id || !user.nameHandler) {
-   //   dispatch(userUpdateProfileReset());
-   //   dispatch(getUserDetails("profile"));
-  //  } else {
-  //    setNameHandler(user.nameHandler);
- //   }
-    // }
-    ////////////////////////////////////////////////////////
-  }, [/*history, dispatch, userInfo, success, user*/]);
+      //  if (!user || !userInfo || user._id !== userInfo._id || !user.nameHandler) {
+      //   dispatch(userUpdateProfileReset());
+      //   dispatch(getUserDetails("profile"));
+      //  } else {
+      //    setNameHandler(user.nameHandler);
+      //   }
+      // }
+      ////////////////////////////////////////////////////////
+    },
+    [
+      /*history, dispatch, userInfo, success, user*/
+    ]
+  );
 
   const pictureEditHandler = () => {
     const fileInput = document.getElementById("imageInput");
     fileInput.click();
   };
+
+  const updateProductHandler = (e) => {
+    e.preventDefault();
+    setUploading(true);
+    const data = new FormData();
+    data.append("file", e.target.files[0]);
+    data.append("upload_preset", "insta-clone");
+    data.append("cloud_name", "mzansiesolution");
+    fetch("https://api.cloudinary.com/v1_1/mzansiesolution/image/upload", {
+      method: "post",
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setURL(data.url);
+        setUploading(false);
+        setImage(data);
+        if (data.url) {
+          dispatch(updateUserImage(user._id, data.url));
+          dispatch(getUserDetails("profile"));
+        }
+      });
+  };
+  /*
   const handlerImageChanger = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
@@ -134,7 +162,7 @@ const Profile = ({ classes}) => {
       setUploading(false);
     }
   };
-
+*/
   return (
     <>
       {loading ? (
@@ -172,40 +200,50 @@ const Profile = ({ classes}) => {
               ) : (
                 <>
                   {userInfo && user ? (
-                    <Paper 
-                    data-aos="flip-right"
-                    className={classes.paper}>
+                    <Paper data-aos="flip-right" className={classes.paper}>
                       <div className={classes.profile}>
-                        <div className="image-wrapper">
-                          {!user.image ? (
-                            <PersonOutlineIcon
-                              color="primary"
-                              className="profile-image"
-                            />
-                          ) : (
-                            <img
-                              className="profile-image"
-                              component="img"
-                              src={user.image}
-                              alt="profile picture"
-                            ></img>
-                          )}
+                        {uploading ? (
+                          <Progress
+                            className={classes.progress}
+                            smallerSpinner
+                            size={50}
+                          ></Progress>
+                        ) : (
+                          <div className="image-wrapper">
+                            {!user.image ? (
+                              <PersonOutlineIcon
+                                color="primary"
+                                className="profile-image"
+                              />
+                            ) : (
+                              <img
+                                className="profile-image"
+                                component="img"
+                                src={user.image}
+                                alt="profile picture"
+                              ></img>
+                            )}
 
-                          <input
-                            hidden="hidden"
-                            type="file"
-                            id="imageInput"
-                            onChange={handlerImageChanger}
-                          ></input>
-                          <Tooltip placement="top" title="edit profile picture">
-                            <IconButton
-                              className="button"
-                              onClick={pictureEditHandler}
+                            <input
+                              hidden="hidden"
+                              type="file"
+                              id="imageInput"
+                              onChange={updateProductHandler}
+                            ></input>
+                            <Tooltip
+                              placement="top"
+                              title="edit profile picture"
                             >
-                              <EditIcon color="primary"></EditIcon>
-                            </IconButton>
-                          </Tooltip>
-                        </div>
+                              <IconButton
+                                className="button"
+                                onClick={pictureEditHandler}
+                              >
+                                <EditIcon color="primary"></EditIcon>
+                              </IconButton>
+                            </Tooltip>
+                          </div>
+                        )}
+
                         <hr />
                         <div className="profile-details">
                           <MuiLink

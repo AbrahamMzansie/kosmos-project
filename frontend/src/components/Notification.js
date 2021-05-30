@@ -117,6 +117,7 @@ const Notification = ({ classes }) => {
         </IconButton>
       </Tooltip>
       <Menu
+        div data-aos="zoom-in-down"
         className={classes.Menu}
         id="long-menu"
         anchorEl={anchorEl}

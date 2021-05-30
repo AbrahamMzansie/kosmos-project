@@ -54,7 +54,7 @@ const Stream = ({ stream, index, classes }) => {
     }
   };
   return (
-    <Card  data-aos="flip-left" className={classes.card}>
+    <Card data-aos="zoom-in-down" className={classes.card}>
       <CardContent className={classes.content}>
         {stream.loadingDelete ? (
           <Progress

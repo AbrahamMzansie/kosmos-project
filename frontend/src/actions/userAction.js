@@ -94,42 +94,43 @@ export const userDetailsInitialScreen = () => async (dispatch) => {
   });
 };
 
-export const userRegister = (nameHandler, email, password) => async (dispatch) => {
-  try {
-    dispatch({
-      type: USER_REGISTER_REQUEST,
-    });
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const { data } = await axios.post(
-      "/api/users",
-      { nameHandler, email, password },
-      config
-    );
-    dispatch({
-      type: USER_REGISTER_SUCCESS,
-      payload: data,
-    });
+export const userRegister =
+  (nameHandler, email, password) => async (dispatch) => {
+    try {
+      dispatch({
+        type: USER_REGISTER_REQUEST,
+      });
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "/api/users",
+        { nameHandler, email, password },
+        config
+      );
+      dispatch({
+        type: USER_REGISTER_SUCCESS,
+        payload: data,
+      });
 
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: data,
+      });
 
-    localStorage.setItem("userInfo", JSON.stringify(data));
-  } catch (error) {
-    dispatch({
-      type: USER_REGISTER_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
+      localStorage.setItem("userInfo", JSON.stringify(data));
+    } catch (error) {
+      dispatch({
+        type: USER_REGISTER_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
 export const getUserDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({
@@ -149,6 +150,31 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: USER_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const updateUserImage = (id, url) => async (dispatch, getState) => {
+  const userData = {
+    id , 
+    url
+  }
+  try {
+    const {
+      userLogin: { userInfo },} = getState();
+    const config = {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    };
+    const { data } = await axios.post(`/api/upload/${id}`, {userData}, config);
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: "USER_DETAILS_FAIL",
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
@@ -199,7 +225,6 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
   }
 };
 
-
 export const updateUserNotification = (user) => async (dispatch, getState) => {
   try {
     dispatch({
@@ -236,32 +261,34 @@ export const updateUserNotification = (user) => async (dispatch, getState) => {
   }
 };
 
-export const listUsers = (isAdmin = false) => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: USER_LIST_REQUEST,
-    });
-    const {
-      userLogin: { userInfo },
-    } = getState();
-    const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-    const { data } = !isAdmin
-      ? await axios.get(`/api/users`, config)
-      : await axios.get(`/api/users/admin`, config);
-    dispatch({
-      type: USER_LIST_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_LIST_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
+export const listUsers =
+  (isAdmin = false) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: USER_LIST_REQUEST,
+      });
+      const {
+        userLogin: { userInfo },
+      } = getState();
+      const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+      const { data } = !isAdmin
+        ? await axios.get(`/api/users`, config)
+        : await axios.get(`/api/users/admin`, config);
+      dispatch({
+        type: USER_LIST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: USER_LIST_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
 
 export const deleteUser = (id) => async (dispatch, getState) => {
   try {
