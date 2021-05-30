@@ -102,10 +102,6 @@ const createComment = asyncHandler(async (req, res) => {
     //add notification
     const newNotification = createNotification(data);
     const notificationList = await newNotification.save();
-    await User.updateOne(
-      { nameHandler: stream.userHandle },
-      { $push: { notifications: data } }
-    );
     res.json({ updatedStream });
   } else {
     res.status(404);
@@ -195,16 +191,6 @@ const unlikeStream = asyncHandler(async (req, res) => {
         { $pull: { likes: { streamId: stream._id } } },
         { safe: true, upsert: true, useFindAndModify: false }
       );
-
-      //add notification
-      const notification = {
-        read: false,
-        recipient: stream.userHandle,
-        sender: user._id,
-        type: "unlike",
-        screamId: stream._id,
-        message: "unlike your post",
-      };
       const data = {
         recipient: stream.userHandle,
         sender: user._id,
@@ -216,10 +202,6 @@ const unlikeStream = asyncHandler(async (req, res) => {
       //add notification
       const newNotification = createNotification(data);
       const notificationList = await newNotification.save();
-      await User.updateOne(
-        { nameHandler: stream.userHandle },
-        { $push: { notifications: notification } }
-      );
 
       const updatedUser = await User.findById(user._id);
       res.json({ updatedStream, updatedUser });
