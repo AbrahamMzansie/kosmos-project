@@ -6,7 +6,7 @@ import NotificationComponent from "./Notification";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import AppBar from "@material-ui/core/AppBar";
-import ToolBar from "@material-ui/core/ToolBar";
+import ToolBar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
 import HomeIcon from "@material-ui/icons/Home";
@@ -82,8 +82,6 @@ const Navbar = ({ classes }) => {
   const userData = useSelector((state) => state.userLogin);
   const { userInfo } = userData;
 
-  
-
   const userLogoutHandler = () => {
     dispatch(userLogout());
   };
@@ -123,21 +121,31 @@ const Navbar = ({ classes }) => {
           ></img>
         </div>
         <Tooltip title="Home" placement="top">
-        <IconButton color="inherit" component={Link} to="/">
-          <HomeIcon />
-        </IconButton>
+          <IconButton color="inherit" component={Link} to="/">
+            <HomeIcon />
+          </IconButton>
         </Tooltip>
         {userInfo ? (
           <>
             <PostStream />
             <NotificationComponent />
             <Tooltip title="Manage Setting" placement="top">
-              <IconButton  component={Link} to="/setting" color="inherit" className={classes.button}>
+              <IconButton
+                component={Link}
+                to="/setting"
+                color="inherit"
+                className={classes.button}
+              >
                 <SettingsSharpIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="Manage Job" placement="top">
-              <IconButton  component={Link} to="/job-listing" color="inherit" className={classes.button}>
+              <IconButton
+                component={Link}
+                to="/job-listing"
+                color="inherit"
+                className={classes.button}
+              >
                 <WorkOutlineTwoToneIcon />
               </IconButton>
             </Tooltip>
