@@ -77,6 +77,7 @@ const Comments = ({
                   <Grid item sm={9}>
                     <div className={classes.commentData}>
                       <Typography
+                       style = {{cursor : "pointer"}}
                         onClick={() => closeModalHandler(`/user/${comment.user.nameHandler}`)}
                         variant="body2"
                         color="primary"

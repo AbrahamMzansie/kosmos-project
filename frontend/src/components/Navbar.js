@@ -11,7 +11,6 @@ import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
 import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import Notifications from "@material-ui/icons/Notifications";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import PostStream from "./PostStream";
@@ -98,20 +97,19 @@ const Navbar = ({ classes }) => {
       <ToolBar user={userInfo} className="nav-container">
         <div
           style={{
-            backgroundColor: "white",
             textAlign: "left",
             left: "10%",
             padding: 0,
             margin: "-10",
-            height: 50,
+            height: 30,
           }}
         >
           <img
             className={classes.profile}
             style={{
-              width: 200,
-              height: 50,
-              objectFit: "cover",
+              width: 100,
+              height: 30,
+              objectFit: "contain",
               maxWidth: "100%",
               margin: "0",
               padding: 0,
@@ -124,21 +122,22 @@ const Navbar = ({ classes }) => {
             alt="profile picture"
           ></img>
         </div>
+        <Tooltip title="Home" placement="top">
         <IconButton color="inherit" component={Link} to="/">
           <HomeIcon />
         </IconButton>
+        </Tooltip>
         {userInfo ? (
           <>
             <PostStream />
-
             <NotificationComponent />
             <Tooltip title="Manage Setting" placement="top">
-              <IconButton color="inherit" className={classes.button}>
+              <IconButton  component={Link} to="/setting" color="inherit" className={classes.button}>
                 <SettingsSharpIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="Manage Job" placement="top">
-              <IconButton color="inherit" className={classes.button}>
+              <IconButton  component={Link} to="/job-listing" color="inherit" className={classes.button}>
                 <WorkOutlineTwoToneIcon />
               </IconButton>
             </Tooltip>

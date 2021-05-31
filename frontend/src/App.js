@@ -5,6 +5,8 @@ import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import home from "./pages/home";
 import signin from "./pages/signin";
 import signup from "./pages/signup";
+import Setting from "./components/Setting";
+import Job from "./components/Job/Job";
 import NavBar from "./components/Navbar";
 import user from "./pages/user";
 import AOS from "aos";
@@ -39,6 +41,8 @@ const App = () => {
         <div className="container">
           <Switch>
             <Route path="/" component={home} exact></Route>
+            <Route path="/setting" component={Setting} exact></Route>
+            <Route path="/job-listing" component={Job} exact></Route>
             <Route path="/signin" component={signin} exact></Route>
             <Route path="/signup" component={signup} exact></Route>
             <Route path="/user/:userHandler" component={user} exact></Route>

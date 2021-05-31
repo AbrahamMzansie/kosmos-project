@@ -70,7 +70,6 @@ const SignUp = ({ classes, location, history }) => {
     <Grid container className={classes.form}>
       <Grid item sm />
       <Grid item sm>
-        <img src={AppIcon} alt="monkey" className={classes.image}></img>
         <Typography variant="h4" className={classes.pageTitle}>
           Sign Up
         </Typography>

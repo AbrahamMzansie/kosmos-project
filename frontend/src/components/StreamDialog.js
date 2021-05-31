@@ -174,7 +174,7 @@ const SreamDialog = ({ streamData, classes, userHandler, showViewButton , index 
                     </Grid>
 
                     <Grid item sm={7}>
-                      <Typography
+                      <Typography style = {{cursor : "pointer"}}
                         onClick={() =>
                           closeModalHandler(`/user/${userHandler}`)
                         }

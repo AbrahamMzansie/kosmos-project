@@ -52,7 +52,7 @@ const PostStream = (classes) => {
   };
   return (
     <>
-      <Tooltip title="Post a New Scream" placement="top">
+      <Tooltip title="Create A New Post" placement="top">
         <IconButton
           color="inherit"
           onClick={openHandler}
@@ -78,13 +78,13 @@ const PostStream = (classes) => {
         ) : (
           <>
             <DialogTitle>
-              <strong>Create A New Scream</strong>
+              <strong>Create A New Post</strong>
             </DialogTitle>
             <DialogContent>
               <form onSubmit={createNewStreamHandler}>
                 <TextField
                   name="body"
-                  label="SCREAM!!"
+                  label="Enter Your Post"
                   type="text"
                   multiline
                   fullWidth
