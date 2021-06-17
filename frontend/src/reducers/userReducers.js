@@ -1,8 +1,4 @@
-import {
-  LIKE_STREAM_REQUEST,
-  LIKE_STREAM_SUCCESS,
-  UNLIKE_STREAM_SUCCESS,
-} from "../constants/streamConstants";
+
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
@@ -28,20 +24,12 @@ import {
   USER_LIST_START,
   USER_LIST_SUCCESS,
   USER_LIST_RESET,
-  USER_DELETE_REQUEST,
-  USER_DELETE_FAIL,
-  USER_DELETE_START,
-  USER_DELETE_SUCCESS,
-  USER_DELETE_RESET,
   USER_UPDATE_REQUEST,
   USER_UPDATE_START,
   USER_UPDATE_RESET,
   USER_UPDATE_SUCCESS,
   USER_UPDATE_FAIL,
-  USER_CONNECT_REQUEST,
-  USER_CONNECT_SUCCESS,
-  USER_CONNECT_RESET,
-  USER_CONNECT_FAIL,
+  
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -125,27 +113,6 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
       return {
         user: {},
       };
-    case LIKE_STREAM_SUCCESS:
-      const { data } = action.payload;
-      const updateUser = {
-        userHandler: data.updatedUser.nameHandler,
-        streamId: data.updatedStream._id,
-      };
-      return {
-        ...state,
-        user: {
-          likes: [...state.user.likes, updateUser],
-        },
-      };
-    case UNLIKE_STREAM_SUCCESS:
-      return {
-        ...state,
-        user: {
-          likes: state.user.likes.filter(
-            (like) => like.streamId !== action.payload.data.updatedStream._id
-          ),
-        },
-      };
 
     case USER_DETAILS_FAIL:
       return {
@@ -225,38 +192,7 @@ export const userListReducer = (state = { users: [] }, action) => {
   }
 };
 
-export const deleteUserReducer = (state = {}, action) => {
-  switch (action.type) {
-    case USER_DELETE_REQUEST:
-      return {
-        loading: true,
-        error: null,
-      };
-    case USER_DELETE_START:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-      };
-    case USER_DELETE_RESET:
-      return {
-        user: [],
-      };
-    case USER_DELETE_SUCCESS:
-      return {
-        loading: false,
-        success: true,
-      };
-    case USER_DELETE_FAIL:
-      return {
-        loading: false,
-        error: action.payload,
-      };
 
-    default:
-      return state;
-  }
-};
 export const updateUserReducer = (state = { user: {} }, action) => {
   switch (action.type) {
     case USER_UPDATE_REQUEST:
@@ -289,27 +225,4 @@ export const updateUserReducer = (state = { user: {} }, action) => {
       return state;
   }
 };
-export const connectWithAdminReducer = (state = { user: {} }, action) => {
-  switch (action.type) {
-    case USER_CONNECT_REQUEST:
-      return {
-        loading: true,
-        error: null,
-      };
-    case USER_CONNECT_SUCCESS:
-      return {
-        loading: false,
-        success: true,
-        user: action.payload,
-      };
-    case USER_CONNECT_RESET:
-      return { user: {} };
-    case USER_CONNECT_FAIL:
-      return {
-        loading: false,
-        error: action.payload,
-      };
-    default:
-      return state;
-  }
-};
+

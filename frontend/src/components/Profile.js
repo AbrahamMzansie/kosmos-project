@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, updateUserImage } from "../actions/userAction";
@@ -18,6 +18,9 @@ import MuiAlert from "@material-ui/lab/Alert";
 import Tooltip from "@material-ui/core/Tooltip";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import Progress from "../components/Progress";
+import CallIcon from "@material-ui/icons/Call";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 
 import EditProfile from "../components/EditProfile";
 
@@ -52,8 +55,8 @@ const styles = {
       },
     },
     "& hr": {
-      border: "none",
-      margin: "0 0 10px 0",
+      
+      margin: "10px 0 10px 0",
     },
     "& svg.button": {
       "&:hover": {
@@ -74,46 +77,15 @@ const Profile = ({ classes }) => {
   const [uploading, setUploading] = useState(false);
   const [image, setImage] = useState("");
   const [URL, setURL] = useState("");
-
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
-
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-  /*
-  const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
-  const {
-    success,
-    loading: loadingUserUpdateProfile,
-    error: errorUserUpdateProfile,
-  } = userUpdateProfile;
-*/
-  useEffect(
-    () => {
-      /* if (!userInfo) {
-      history.push("/login");
-    } else {*/
-      //////////////////////////////////////////////////////
-      //  if (!user || !userInfo || user._id !== userInfo._id || !user.nameHandler) {
-      //   dispatch(userUpdateProfileReset());
-      //   dispatch(getUserDetails("profile"));
-      //  } else {
-      //    setNameHandler(user.nameHandler);
-      //   }
-      // }
-      ////////////////////////////////////////////////////////
-    },
-    [
-      /*history, dispatch, userInfo, success, user*/
-    ]
-  );
-
   const pictureEditHandler = () => {
     const fileInput = document.getElementById("imageInput");
     fileInput.click();
   };
-
   const updateProductHandler = (e) => {
     e.preventDefault();
     setUploading(true);
@@ -136,33 +108,7 @@ const Profile = ({ classes }) => {
         }
       });
   };
-  /*
-  const handlerImageChanger = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("image", file);
 
-    setUploading(true);
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-      const { data } = await axios.post(
-        `/api/upload/${user._id}`,
-        formData,
-        config
-      );
-      setImage(data);
-      setUploading(false);
-      dispatch(getUserDetails("profile"));
-    } catch (error) {
-      console.error(error);
-      setUploading(false);
-    }
-  };
-*/
   return (
     <>
       {loading ? (
@@ -243,47 +189,46 @@ const Profile = ({ classes }) => {
                             </Tooltip>
                           </div>
                         )}
-
-                        <hr />
+                       
                         <div className="profile-details">
-                          <MuiLink
-                            component={Link}
-                            to={`/user/${user.nameHandler}`}
-                            color="primary"
-                            variant="h5"
-                          >
-                            @{user.nameHandler}
-                          </MuiLink>
-                          <hr />
-                          {user.bio && (
-                            <Typography variant="body2">{user.bio}</Typography>
-                          )}
-                          <hr />
-                          {user.location && (
+                         
+                          {user.nameHandler && (
                             <>
-                              <LocationOn color="primary"></LocationOn>
-                              <span color="primary">{user.location}</span>
+                              <AccountCircleIcon color="primary"></AccountCircleIcon>
+                              <span color="primary">{user.nameHandler}</span>
                               <hr></hr>
                             </>
                           )}
-                          {user.website && (
+                        
+                          {user.address && (
                             <>
-                              <LinkIcon color="primary" />
+                              <LocationOn color="primary"></LocationOn>
+                              <span color="primary">{user.address}</span>
+                              <hr></hr>
+                            </>
+                          )}
+                          {user.contactNumber && (
+                            <>
+                              <CallIcon color="primary" />
                               <a
-                                href={user.website}
+                                href={user.contactNumber}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
                                 {" "}
-                                {user.website}
+                                {user.contactNumber}
                               </a>
                               <hr />
                             </>
                           )}
-                          <CalendarToday color="primary" />{" "}
-                          <span>
-                            Joined {dayjs(user.createdAt).format("MMM YYYY")}
-                          </span>
+                          {user.userType && (
+                            <>
+                              <AssignmentIndIcon color="primary"></AssignmentIndIcon>
+                              <span color="primary">{user.userType}</span>
+                              <hr></hr>
+                            </>
+                          )}
+                         
                         </div>
                         <EditProfile user={user} />
                       </div>

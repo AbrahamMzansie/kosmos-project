@@ -1,5 +1,4 @@
 const User = require("../models/userModels");
-const Product = require("../models/productModels");
 const asyncHandler = require("express-async-handler");
 const generateToken = require("../token/generateToken");
 
@@ -9,12 +8,24 @@ const generateToken = require("../token/generateToken");
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email: email });
+  if (user) {
+    if (!user.isAdmin) {
+      res.status(400);
+      throw new Error(`User with name ${user.nameHandler} is not approved`);
+    }
+  }
+
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
       nameHandler: user.nameHandler,
       email: user.email,
-      isAdmin: user.isAdmin,
+      address: user.address,
+      userType: user.userType,
+      contactNumber: user.contactNumber,
+      admin: user.isAdmin,
+      image: user.image,
+      approved: user.approved,
       token: generateToken(user._id),
     });
   } else {
@@ -27,28 +38,94 @@ const authUser = asyncHandler(async (req, res) => {
 //@route : POST /api/users
 //@access : public access
 const registerUser = asyncHandler(async (req, res) => {
-  const { nameHandler, email, password } = req.body;
+  const {
+    nameHandler,
+    email,
+    password,
+    address,
+    userType,
+    contactNumber,
+    admin,
+    image,
+  } = req.body;
   const userExist = await User.findOne({ email: email });
-  const userName = await User.findOne({ nameHandler: nameHandler });
-  if (userName) {
-    res.status(400);
-    throw new Error(`User with name ${nameHandler} already exist`);
-  }
+
   if (userExist) {
     res.status(400);
     throw new Error(`User with email ${email} already exist`);
   } else {
     const user = await User.create({
-      nameHandler: nameHandler,
-      email: email,
-      password: password,
+      nameHandler,
+      email,
+      password,
+      address,
+      userType,
+      contactNumber,
+      isAdmin: admin,
+      image,
+      approved: false,
     });
     if (user) {
       res.status(201).json({
-        _id: user._id,
         nameHandler: user.nameHandler,
+        _id: user._id,
         email: user.email,
-        isAdmin: user.isAdmin,
+        address: user.address,
+        userType: user.userType,
+        contactNumber: user.contactNumber,
+        admin: user.isAdmin,
+        image: user.image,
+        approved: user.approved,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(404);
+      throw new Error(`Invalid data`);
+    }
+  }
+});
+
+//@desc : register a new admin user
+//@route : POST /api/admin/users
+//@access : public access
+const registerAdminUser = asyncHandler(async (req, res) => {
+  const {
+    nameHandler,
+    email,
+    password,
+    address,
+    userType,
+    contactNumber,
+    admin,
+    image,
+  } = req.body;
+  const userExist = await User.findOne({ email: email });
+  if (userExist) {
+    res.status(400);
+    throw new Error(`User with email ${email} already exist`);
+  } else {
+    const user = await User.create({
+      nameHandler,
+      email,
+      password,
+      address,
+      userType,
+      contactNumber,
+      isAdmin: admin,
+      image,
+      approved: admin ? true : false,
+    });
+    if (user) {
+      res.status(201).json({
+        nameHandler: user.nameHandler,
+        _id: user._id,
+        email: user.email,
+        address: user.address,
+        userType: user.userType,
+        contactNumber: user.contactNumber,
+        admin: user.isAdmin,
+        image: user.image,
+        approved: user.approved,
         token: generateToken(user._id),
       });
     } else {
@@ -62,9 +139,7 @@ const registerUser = asyncHandler(async (req, res) => {
 //@route : GET /api/users/profile
 //@access : private
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id)
-    .populate("notifications.sender", "nameHandler read image")
-    .populate("notifications.screamId");
+  const user = await User.findById(req.user._id);
   if (user) {
     res.json(user);
   } else {
@@ -77,35 +152,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
 //@route : GET /api/users
 //@access : Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({});
+  const users = await User.find({ isAdmin: false });
   res.json(users);
-});
-
-//@desc : get all Admin Users and Related Products
-//@route : GET /api/users/:isAdmin
-//@access : Private
-const getAdminUsersAndRelatedProducts = asyncHandler(async (req, res) => {
-  // _id: { $ne: req.user._id }
-  const users = await User.find({ isAdmin: true });
-  if (users) {
-    await Promise.all(
-      users.map(async (item) => {
-        const product = await Product.find({ user: item._id });
-        if (product.length !== 0) {
-          const existProduct = item.products.find((i) => {
-            return i._id == product._id;
-          });
-          if (!existProduct) {
-            item.products.push(...product);
-          }
-        }
-      })
-    );
-    res.json(users);
-  } else {
-    res.status(404);
-    throw new Error("No Admin users");
-  }
 });
 
 //@desc : get user by id
@@ -129,11 +177,12 @@ const updateUser = asyncHandler(async (req, res) => {
   if (user) {
     user.nameHandler = req.body.nameHandler || user.nameHandler;
     user.email = req.body.email || user.email;
-    user.isAdmin = req.body.isAdmin;
+    user.contactNumber = req.body.contactNumber || user.contactNumber;
     user.image = req.body.image || user.image;
-    user.website = req.body.website || user.website;
-    user.bio = req.body.bio || user.bio;
-    user.location = req.body.location || user.location;
+    user.adddress = req.body.address || user.address;
+    user.userType = req.body.userType || user.userType;
+    user.isAdmin = req.body.isAdmin || user.isAdmin;
+    user.approved = req.body.approved || user.approved;
     const updatedUser = await user.save();
     res.json({
       _id: updatedUser._id,
@@ -141,57 +190,15 @@ const updateUser = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
       image: updatedUser.image,
-      website: updatedUser.website,
-      bio: updatedUser.bio,
-      location: updatedUser.location,
+      contactNumber: updatedUser.contactNumber,
+      adddress: updatedUser.adddress,
+      userType: updatedUser.userType,
+      approved: updatedUser.approved,
+      token: generateToken(updatedUser._id),
     });
   } else {
     res.status(404);
     throw new Error("User not found");
-  }
-});
-
-//@desc : update user image
-//@route : PUT /api/users/:id
-//@access : private
-const updateUserImage = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (user) {
-    user._id = user._id;
-    user.nameHandler = user.nameHandler;
-    user.email = user.email;
-    user.isAdmin = user.isAdmin;
-    user.image = user.image;
-    user.website = user.website;
-    user.bio = user.bio;
-    user.location = user.location;
-
-    const updatedUser = await user.save();
-    /*
-    res.json({
-      _id: updatedUser._id,
-      nameHandler: updatedUser.nameHandler,
-      email: updatedUser.email,
-      isAdmin: updatedUser.isAdmin,
-    });
-    */
-  } else {
-    res.status(404);
-    throw new Error("User not found");
-  }
-});
-
-//@desc : delete a user
-//@route : DELETE /api/users/:id
-//@access : Private/Admin
-const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (user) {
-    await user.remove();
-    res.json({ message: "User was removed" });
-  } else {
-    res.status(404);
-    throw new Error("User Not Found");
   }
 });
 
@@ -203,11 +210,12 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   if (user) {
     user.nameHandler = req.body.nameHandler || user.nameHandler;
     user.email = req.body.email || user.email;
+    user.contactNumber = req.body.contactNumber || user.contactNumber;
     user.image = req.body.image || user.image;
-    user.website = req.body.website || user.website;
-    user.bio = req.body.bio || user.bio;
-    user.location = req.body.location || user.location;
-    user.likes = req.body.likes || user.likes;
+    user.address = req.body.address || user.address;
+    user.userType = req.body.userType || user.buserType;
+    user.isAdmin = req.body.isAdmin || user.isAdmin;
+    user.approved = req.body.approved || user.approved;
     if (req.body.password) {
       user.password = req.body.password;
     }
@@ -218,10 +226,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
       image: updatedUser.image,
-      website: updatedUser.website,
-      bio: updatedUser.bio,
-      location: updatedUser.location,
-      likes: updatedUser.likes,
+      contactNumber: updatedUser.contactNumber,
+      adddress: updatedUser.adddress,
+      userType: updatedUser.userType,
+      isAdmin: updatedUser.isAdmin,
+      approved: updatedUser.approved,
       token: generateToken(updatedUser._id),
     });
   } else {
@@ -229,51 +238,26 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 });
-//@desc : connect with admin user
-//@route : PUT /api/users/:id/connect
+//@desc : APPROVE A USER
+//@route : GET /api/users/:userid
 //@access : private
-const connectWithAdminUser = asyncHandler(async (req, res) => {
+const approverUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (user) {
-    const existPartner = user.partners.find((i) => {
-      return i._id == req.body._id;
-    });
-    if (!existPartner) {
-      user.partners.push({ ...req.body });
-    }
-    if (req.body.products) {
-      req.body.products.map((product) => {
-        const existProduct = user.products.find((i) => {
-          return i._id == product._id;
-        });
-        if (!existProduct) {
-          user.products.push({ ...product });
-        }
-      });
-    }
-    const updatedUser = await user.save();
-    res.json({
-      _id: updatedUser._id,
-      nameHandler: updatedUser.nameHandler,
-      email: updatedUser.email,
-      isAdmin: updatedUser.isAdmin,
-      partners: updatedUser.partners,
-      products: updatedUser.products,
-    });
-  } else {
-    res.status(404);
-    throw new Error("User not found");
+    await User.updateOne({ _id: user._id }, { $set: { approved: true } });
+    const users = await User.find({ isAdmin: false });
+    res.json(users);
   }
 });
+
 module.exports = {
   authUser: authUser,
   getUserProfile: getUserProfile,
   registerUser: registerUser,
+  registerAdminUser: registerAdminUser,
   updateUserProfile: updateUserProfile,
   getUsers: getUsers,
-  deleteUser: deleteUser,
   getUserById: getUserById,
   updateUser: updateUser,
-  getAdminUsersAndRelatedProducts: getAdminUsersAndRelatedProducts,
-  connectWithAdminUser,
+  approverUser: approverUser,
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { userRegister } from "../actions/userAction";
+import { userAdminRegister } from "../actions/userAction";
 import withStyles from "@material-ui/core/styles/withStyles";
 import MuiAlert from "@material-ui/lab/Alert";
 import TextField from "@material-ui/core/TextField";
@@ -14,10 +14,10 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
 
 const styles = {
   formControl: {
-    marginLeft: "10px",
     minWidth: "120px",
     display: "flex",
     justifyContent: "start",
@@ -51,7 +51,7 @@ const styles = {
     position: "absolute",
   },
 };
-const SignUp = ({ classes, location, history }) => {
+const AdminSignUp = ({ classes, location, history }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [admin, setAdmin] = useState(false);
@@ -61,7 +61,7 @@ const SignUp = ({ classes, location, history }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [nameHandler, setNameHandler] = useState("");
   const [message, setMessage] = useState("");
-  const [type , setType] = useState("error")
+  const [type, setType] = useState("error");
   const dispatch = useDispatch();
   const registerData = useSelector((state) => state.userRegister);
   const { loading, error, userInfo } = registerData;
@@ -69,20 +69,30 @@ const SignUp = ({ classes, location, history }) => {
   const redirect = location.search ? location.search.split("=")[1] : "/";
   useEffect(() => {
     if (userInfo) {
-      history.push(redirect);
+      setMessage("User created succesful!");
+      setType("success");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setNameHandler("");
+      setUserType("");
+      setAddress("");
+      setContactNumber("");
+      setAdmin(false);
     } else {
-      history.push("signup");
+      history.push("/admin");
     }
   }, [history, redirect, userInfo, dispatch]);
   const registerHandler = (e) => {
-    setMessage("")
+    setMessage("");
     setType("");
     e.preventDefault();
     if (password !== confirmPassword) {
       setMessage("Password do not match!");
+      setType("error");
     } else {
       dispatch(
-        userRegister(
+        userAdminRegister(
           nameHandler,
           email,
           password,
@@ -100,7 +110,7 @@ const SignUp = ({ classes, location, history }) => {
       <Grid item sm />
       <Grid item sm>
         <Typography variant="h4" className={classes.pageTitle}>
-         User  Sign Up
+          Admin Panel Sign Up
         </Typography>
         {message && <MuiAlert severity={type}>{message}</MuiAlert>}
         {error && (
@@ -117,7 +127,9 @@ const SignUp = ({ classes, location, history }) => {
             label="Email"
             className={classes.textField}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>
+              setEmail(e.target.value)
+              }
           ></TextField>
           <TextField
             id="name"
@@ -178,6 +190,22 @@ const SignUp = ({ classes, location, history }) => {
               <MenuItem value="Operator">Operator</MenuItem>
             </Select>
           </FormControl>
+          <FormControlLabel
+           className={classes.formControl}
+            control={
+              <Checkbox
+                color="primary"
+                checked={admin}
+                onChange={(e) =>{
+                  console.log(e.target.checked);
+                  setAdmin(e.target.checked)}
+                }
+                
+                name="admin"
+              />
+            }
+            label="Admin"
+          />
           <Button
             disabled={loading}
             type="submit"
@@ -185,25 +213,26 @@ const SignUp = ({ classes, location, history }) => {
             color="primary"
             className={classes.button}
           >
-            Sign Up
+            Register User
             {loading && (
               <div className={classes.progress}>
                 <CircularProgress color="primary" size={30} />
               </div>
             )}
           </Button>
-          <br></br>
-          <small>
+         <br/>
+         {""}
+          <large style = {{marginTop : "20px"}}>
             Existing User ? Sign in <Link to="/signin">Here</Link>
-          </small>
+          </large>
         </form>
       </Grid>
       <Grid item sm />
     </Grid>
   );
 };
-SignUp.propTypes = {
+AdminSignUp.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SignUp);
+export default withStyles(styles)(AdminSignUp);

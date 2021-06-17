@@ -1,72 +1,23 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const likeSchema = mongoose.Schema(
-  {
-    userHandler: { type: String, reqired: true },
-    streamId: { type: String, reqired: true },
-  },
-  { timestamps: true }
-);
-
-const notificationSchema = mongoose.Schema(
-  {
-    message : {
-      type : String,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    error: {
-      type: String,
-    },
-    recipient: {
-      type: String,
-      required: true,
-    },
-    sender: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
-    },
-    type: {
-      type: String,
-      required: true,
-    },
-    read: {
-      type: Boolean,
-      default: false,
-    },
-    screamId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "Stream",
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
 const userSchema = mongoose.Schema(
   {
-    notifications : [notificationSchema],
-    likes: [likeSchema],
     nameHandler: {
       type: String,
-      required: true,
-      unique: true,
+     
     },
     image: {
       type: String,
     },
-    bio: {
+
+    address: {
       type: String,
     },
-    location: {
+    userType: {
       type: String,
     },
-    website: {
+    contactNumber: {
       type: String,
     },
     email: {
@@ -80,7 +31,10 @@ const userSchema = mongoose.Schema(
     },
     isAdmin: {
       type: Boolean,
-      required: true,
+      default: false,
+    },
+    approved: {
+      type: Boolean,
       default: false,
     },
   },

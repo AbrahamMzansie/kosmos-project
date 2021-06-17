@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogout } from "../actions/userAction";
 
-import NotificationComponent from "./Notification";
+
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import AppBar from "@material-ui/core/AppBar";
@@ -13,11 +13,9 @@ import HomeIcon from "@material-ui/icons/Home";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
-import PostStream from "./PostStream";
+
 import SettingsSharpIcon from "@material-ui/icons/SettingsSharp";
 import WorkOutlineTwoToneIcon from "@material-ui/icons/WorkOutlineTwoTone";
-
-import { listNotifications } from "../actions/notificationAction";
 
 const styles = {
   paper: {
@@ -85,11 +83,6 @@ const Navbar = ({ classes }) => {
   const userLogoutHandler = () => {
     dispatch(userLogout());
   };
-
-  useEffect(() => {
-    dispatch(listNotifications());
-  }, []);
-
   return (
     <AppBar>
       <ToolBar user={userInfo} className="nav-container">
@@ -102,23 +95,7 @@ const Navbar = ({ classes }) => {
             height: 30,
           }}
         >
-          <img
-            className={classes.profile}
-            style={{
-              width: 100,
-              height: 30,
-              objectFit: "contain",
-              maxWidth: "100%",
-              margin: "0",
-              padding: 0,
-              backgroundColor: "blue",
-              backgroundColor: "white",
-              marginBottom: 0,
-            }}
-            component="img"
-            src="/images/kosmos-image-3.png"
-            alt="profile picture"
-          ></img>
+          
         </div>
         <Tooltip title="Home" placement="top">
           <IconButton color="inherit" component={Link} to="/">
@@ -127,28 +104,6 @@ const Navbar = ({ classes }) => {
         </Tooltip>
         {userInfo ? (
           <>
-            <PostStream />
-            <NotificationComponent />
-            <Tooltip title="Manage Setting" placement="top">
-              <IconButton
-                component={Link}
-                to="/setting"
-                color="inherit"
-                className={classes.button}
-              >
-                <SettingsSharpIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Manage Job" placement="top">
-              <IconButton
-                component={Link}
-                to="/job-listing"
-                color="inherit"
-                className={classes.button}
-              >
-                <WorkOutlineTwoToneIcon />
-              </IconButton>
-            </Tooltip>
             <Tooltip title="click the  icon to log off" placement="top">
               <IconButton
                 component={Link}

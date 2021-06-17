@@ -13,10 +13,14 @@ import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 
 const styles = {
   buttons: {
@@ -32,19 +36,24 @@ const styles = {
 };
 
 const EditProfile = ({ classes, user }) => {
-  const [location, setLocation] = useState("");
-  const [bio, setBio] = useState("");
-  const [website, setWebsite] = useState("");
-  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [userType, setUserType] = useState("");
   const [nameHandler, setNameHandler] = useState("");
+  
+  const [open, setOpen] = useState(false);
+  
   const dispatch = useDispatch();
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const { success, loading: loading, error: error } = userUpdateProfile;
   const mapUserDetailsToState = (userDetails) => {
     if (userDetails) {
-      setBio(userDetails.bio ? userDetails.bio : "");
-      setLocation(userDetails.location ? userDetails.location : "");
-      setWebsite(userDetails.website ? userDetails.website : "");
+      setEmail(userDetails.email ? userDetails.email : "");
+      setContactNumber(userDetails.contactNumber ? userDetails.contactNumber : "");
+      setAddress(userDetails.address ? userDetails.address : "");
+      setUserType(userDetails.userType ? userDetails.userType : "");
+      setNameHandler(userDetails.nameHandler ? userDetails.nameHandler : "")
     }
   };
   useEffect(() => {
@@ -64,7 +73,11 @@ const EditProfile = ({ classes, user }) => {
     setOpen(false);
   };
   const editProfileHandler = () => {
-    dispatch(updateUserProfile({ bio, location, website }));
+    dispatch(updateUserProfile({ nameHandler,
+      address,
+      userType,
+      contactNumber,
+      }));
     dispatch(getUserDetails("profile"));
     setOpen(false);
   };
@@ -78,41 +91,54 @@ const EditProfile = ({ classes, user }) => {
         </IconButton>
       </Tooltip>
     </div>
-      
       <Dialog fullWidth maxWidth="sm" open={open} onClose={closeHandler}>
         <DialogTitle>Edit Your details</DialogTitle>
         <DialogContent>
           <form>
             <TextField
-              name="bio"
-              label="Bio"
+              name="firstName"
+              label="First Name"
               type="text"
               multiline
               fullWidth
-              rows="3"
-              placeholder="A short bio about yourself"
+              
+              placeholder="Your First name"
               className={classes.TextField}
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
+              value={nameHandler}
+              onChange={(e) => setNameHandler(e.target.value)}
             ></TextField>
             <TextField
-              name="website"
-              label="Website"
+              name="contactNumbaer"
+              label="Contact Number"
               type="text"
-              placeholder="Your personal/professional website"
+              placeholder="Your contact number"
               className={classes.textField}
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
+              value={contactNumber}
+              onChange={(e) => setContactNumber(e.target.value)}
             ></TextField>
             <TextField
-              name="location"
-              label="Location"
+              name="address"
+              label="Address"
               type="text"
               placeholder="Where you live?"
               className={classes.textField}
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
             ></TextField>
+            <FormControl className={classes.formControl}>
+            <InputLabel id="demo-simple-select-label">User Type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={userType}
+              onChange={(e) => setUserType(e.target.value)}
+            >
+              <MenuItem value=""></MenuItem>
+              <MenuItem value="Agent">Agent</MenuItem>
+              <MenuItem value="Customer">Customer</MenuItem>
+              <MenuItem value="Operator">Operator</MenuItem>
+            </Select>
+          </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
